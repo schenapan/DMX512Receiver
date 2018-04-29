@@ -103,31 +103,35 @@ static void RxCallback( Int8U *packet, Int8U linkQuality, Int8S rssi)
 
 	Int8U packet_size = packet[0];
 
-
-	if( packet_size > 74 )
+	if( packet_size > 12 )
 	{
+
 		// frm control
 		if( (0x01==packet[1]) && (0x08==packet[2]) )
 		{
+			
 			Int8U seq_number = packet[3];
 			// dest panId
 			if( (0xCD==packet[4]) && (0xAB==packet[5]) )
 			{
+				
 				// dest addr
 				if( (0xFF==packet[6]) && (0xFF==packet[7]) )
 				{
+					
 					// TAG
 					if( ('D'==packet[8]) && ('M'==packet[9]) && ('X'==packet[10]) )
 					{
+						
 						// Option
 						Int8U frm_option = packet[11] >> 4;
 						// Offset
 						Int8U frm_offset = packet[11] & 0x0F;
 
-						// only supported option for moment
+						
 						if( 0 == frm_option )
 						{
-						
+							// un octet par addresse, niveau lumineux
 
 							if( (DMX_ADDRESS >= (RADIO_DMX_DATA_SIZE*frm_offset)) &&
 								(DMX_ADDRESS < (RADIO_DMX_DATA_SIZE*(frm_offset+1)))
@@ -142,6 +146,22 @@ static void RxCallback( Int8U *packet, Int8U linkQuality, Int8S rssi)
 								}
 							 }
 						} 
+						else if( 1 == frm_option )
+						{
+													
+							// un octet dans le message contient les addresse 0->16 codé sur 1 bit (on/off)
+							if( DMX_ADDRESS < 16 )
+							{
+								Int8U value = 0xFF * ((((Int16U)(packet[12]+(packet[13]<<8)))>>DMX_ADDRESS)&0x01);
+								
+								if( l_last_value != value )
+								{
+									// drvLedSetOnTime(RF_LED, value);
+									drvLedSetOnTime(APP_LED_1, value);
+									l_last_value = value;
+								}
+							}
+						}
 					}
 				}
 			}

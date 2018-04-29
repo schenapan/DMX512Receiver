@@ -7,7 +7,7 @@
 // include driver
 
 // DEFINE DMX address of module
-#define DMX_ADDRESS 1
+#define DMX_ADDRESS 1 // 0 1 2
 
 // definit le nombre de led a gerer en variation
 #define NB_DIMMABLE_LED	2

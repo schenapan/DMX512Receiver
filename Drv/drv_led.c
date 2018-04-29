@@ -71,8 +71,16 @@ void drvLedInit( void )
 */
 void drvLedSetLedOn( SIo i_led )
 {
-  micIoConfigOutput( i_led );
-  micIoSet( i_led, IO_LVL_GND );
+	if((APP_LED_1.pin == i_led.pin)&&(APP_LED_1.port == i_led.port))
+	{
+	  micIoConfigOutput( i_led );
+	  micIoSet( i_led, IO_LVL_VCC );
+	}
+	else
+	{
+	  micIoConfigOutput( i_led );
+	  micIoSet( i_led, IO_LVL_GND );
+	}
 }
 
 /**
@@ -84,7 +92,15 @@ void drvLedSetLedOn( SIo i_led )
 */
 void drvLedSetLedOff( SIo i_led )
 {
-  micIoConfigInput( i_led, IO_NO_PULL_UP );
+	if((APP_LED_1.pin == i_led.pin)&&(APP_LED_1.port == i_led.port))
+	{
+	  micIoConfigOutput( i_led );
+	  micIoSet( i_led, IO_LVL_GND );	
+	}
+	else
+	{
+		micIoConfigInput( i_led, IO_NO_PULL_UP );
+	}
 }
 
 /**
