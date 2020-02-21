@@ -21,7 +21,7 @@
 *                                                                              *
 *******************************************************************************/
 
-
+#define NO_DIMMABLE
 
 /*******************************************************************************
 *                                                                              *
@@ -42,8 +42,9 @@ struct
 *                                                                              *
 *******************************************************************************/
 
+#ifndef NO_DIMMABLE
 static void drvLedTimer( void );
-
+#endif
 /*******************************************************************************
 *                                                                              *
 *                  Public Functions of the Module                              *
@@ -59,7 +60,9 @@ void drvLedInit( void )
 	{
 		dim_led_tbl[loop].led = INVALID_IO;
 	}
+#ifndef NO_DIMMABLE
 	drvTimerAdd( drvLedTimer, 1U, TIMER_PERIODIC_CALL );
+#endif
 }
 
 /**
@@ -110,6 +113,18 @@ void drvLedSetLedOff( SIo i_led )
 */
 void drvLedSetOnTime( SIo i_led, Int8U on_time_value )
 {
+#ifdef NO_DIMMABLE	
+	if( 0 == on_time_value )
+	{
+		// off
+		drvLedSetLedOff(i_led);
+	}
+	else
+	{
+		// on
+		drvLedSetLedOn(i_led);
+	}	
+#else
 	// remove existing led
 	for( int loop=0; loop<NB_DIMMABLE_LED; loop++ )
 	{
@@ -119,7 +134,7 @@ void drvLedSetOnTime( SIo i_led, Int8U on_time_value )
 			loop=NB_DIMMABLE_LED;
 		}
 	}
-
+	
 	if( 0 == on_time_value )
 	{
 		// off
@@ -141,8 +156,9 @@ void drvLedSetOnTime( SIo i_led, Int8U on_time_value )
 				dim_led_tbl[loop].on_counter = 0;
 				loop=NB_DIMMABLE_LED;
 			}
-		}
+		}		
 	}
+#endif
 }
 
 
@@ -152,7 +168,7 @@ void drvLedSetOnTime( SIo i_led, Int8U on_time_value )
 *                                                                              *
 *******************************************************************************/
 
-
+#ifndef NO_DIMMABLE
 static void drvLedTimer( void )
 {
 	static Int8U roll_over_counter = 0x0F;
@@ -184,6 +200,7 @@ static void drvLedTimer( void )
 		}
 	}
 }
+#endif
 
 /******************************************************************************/
 /******************************************************************************/

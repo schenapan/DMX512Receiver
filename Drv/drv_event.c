@@ -37,7 +37,7 @@
 *                                                                              *
 *******************************************************************************/
 
-#define EVENT_FIFO_MAX  10U // warning limited to 254 due to variable in Int8U
+#define EVENT_FIFO_MAX  100U // warning limited to 254 due to variable in Int8U
 
 /*******************************************************************************
 *                                                                              *
